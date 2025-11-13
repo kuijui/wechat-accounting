@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accounting.mapper.CategoryMapper">
+
+    <resultMap id="CategoryResponseMap" type="com.accounting.dto.CategoryResponse">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="icon" property="icon"/>
+        <result column="color" property="color"/>
+        <result column="type" property="type"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="is_system" property="isSystem"/>
+    </resultMap>
+
+    <select id="selectCategoryList" resultMap="CategoryResponseMap">
+        SELECT
+            c.id,
+            c.name,
+            c.icon,
+            c.color,
+            c.type,
+            c.sort_order,
+            c.is_system
+        FROM category c
+        WHERE c.deleted = 0
+          AND (c.is_system = 1 OR c.user_id = #{userId})
+        <if test="type != null">
+            AND c.type = #{type}
+        </if>
+        ORDER BY c.sort_order ASC, c.create_time ASC
+    </select>
+
+</mapper>
