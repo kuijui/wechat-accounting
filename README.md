@@ -77,6 +77,13 @@ mvn spring-boot:run
 - `/statistic/category` 分类占比统计
 - `/statistic/trend` 收支趋势统计
 
+**预算模块**
+- `/budget/create` 创建预算
+- `/budget/update/{id}` 更新预算
+- `/budget/delete/{id}` 删除预算
+- `/budget/detail/{id}` 获取预算详情
+- `/budget/list` 获取预算列表
+
 > 说明：接口默认运行在 `http://localhost:8081/api`，除登录接口外均需携带 `Authorization: Bearer <token>`。
 
 ## 开发进度
@@ -85,7 +92,8 @@ mvn spring-boot:run
 - [x] 账单管理模块
 - [x] 分类管理模块
 - [x] 统计分析模块
-- [ ] 预算管理模块
-- [ ] MyBatis XML 映射完善
+- [x] 预算管理模块
+- [x] MyBatis XML 映射完善
+- [ ] 后端接口测试
 - [ ] 前端 uni-app 开发
 - [ ] 前后端联调测试

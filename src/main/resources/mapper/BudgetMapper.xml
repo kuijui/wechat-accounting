@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accounting.mapper.BudgetMapper">
+
+    <resultMap id="BudgetResponseMap" type="com.accounting.dto.BudgetResponse">
+        <id column="id" property="id"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="amount" property="amount"/>
+        <result column="year" property="year"/>
+        <result column="month" property="month"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        b.id,
+        b.category_id,
+        COALESCE(c.name, '全部分类') AS category_name,
+        b.amount,
+        b.year,
+        b.month,
+        b.status,
+        b.create_time
+    </sql>
+
+    <select id="selectBudgetList" resultMap="BudgetResponseMap">
+        SELECT
+        <include refid="BaseColumns"/>
+        FROM budget b
+        LEFT JOIN category c ON b.category_id = c.id AND c.deleted = 0
+        WHERE b.deleted = 0
+          AND b.user_id = #{userId}
+        <if test="year != null">
+            AND b.year = #{year}
+        </if>
+        <if test="month != null">
+            AND b.month = #{month}
+        </if>
+        ORDER BY b.year DESC, b.month DESC, b.create_time DESC
+    </select>
+
+    <select id="selectBudgetDetail" resultMap="BudgetResponseMap">
+        SELECT
+        <include refid="BaseColumns"/>
+        FROM budget b
+        LEFT JOIN category c ON b.category_id = c.id AND c.deleted = 0
+        WHERE b.deleted = 0
+          AND b.user_id = #{userId}
+          AND b.id = #{budgetId}
+        LIMIT 1
+    </select>
+
+</mapper>
