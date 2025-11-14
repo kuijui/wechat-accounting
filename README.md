@@ -7,9 +7,8 @@
 - Spring Boot 2.7.14
 - MyBatis Plus 3.5.3.1
 - MySQL 8.0
-- Redis
+- Redis（可选）
 - JWT
-- Knife4j (API文档)
 
 ## 项目结构
 ```
@@ -52,12 +51,41 @@ CREATE DATABASE wechat_accounting DEFAULT CHARACTER SET utf8mb4;
 mvn spring-boot:run
 ```
 
-### 5. 访问API文档
-http://localhost:8080/doc.html
+### 5. 接口测试
+推荐使用 Apifox 导入以下接口进行联调：
+
+**用户模块**
+- `/user/login` 小程序登录（code 可使用 `test-xxxx` 进入测试模式）
+- `/user/info` 获取用户信息
+- `/user/update` 更新用户信息
+
+**账单模块**
+- `/bill/create` 创建账单
+- `/bill/update/{id}` 更新账单
+- `/bill/delete/{id}` 删除账单
+- `/bill/detail/{id}` 获取账单详情
+- `/bill/list` 查询账单列表
+
+**分类模块**
+- `/category/create` 创建自定义分类
+- `/category/update/{id}` 更新分类
+- `/category/delete/{id}` 删除分类
+- `/category/list` 获取分类列表（含系统预设）
+
+**统计模块**
+- `/statistic/overview` 收支概览统计
+- `/statistic/category` 分类占比统计
+- `/statistic/trend` 收支趋势统计
+
+> 说明：接口默认运行在 `http://localhost:8081/api`，除登录接口外均需携带 `Authorization: Bearer <token>`。
 
 ## 开发进度
 - [x] 项目初始化
-- [ ] 用户登录模块
-- [ ] 账单管理模块
-- [ ] 统计分析模块
-- [ ] 分类管理模块
+- [x] 用户登录模块
+- [x] 账单管理模块
+- [x] 分类管理模块
+- [x] 统计分析模块
+- [ ] 预算管理模块
+- [ ] MyBatis XML 映射完善
+- [ ] 前端 uni-app 开发
+- [ ] 前后端联调测试
