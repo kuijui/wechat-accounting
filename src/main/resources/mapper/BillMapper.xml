@@ -63,4 +63,80 @@
         LIMIT 1
     </select>
 
+    <!-- 统计查询 -->
+    <select id="sumAmountByDateRange" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(amount), 0)
+        FROM bill
+        WHERE deleted = 0
+          AND user_id = #{userId}
+          AND type = #{type}
+          AND bill_date BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <resultMap id="CategoryStatisticMap" type="com.accounting.dto.CategoryStatisticResponse">
+        <result column="category_id" property="categoryId"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="category_icon" property="categoryIcon"/>
+        <result column="total_amount" property="totalAmount"/>
+        <result column="bill_count" property="billCount"/>
+    </resultMap>
+
+    <select id="selectCategoryStatistics" resultMap="CategoryStatisticMap">
+        SELECT
+            b.category_id,
+            c.name AS category_name,
+            c.icon AS category_icon,
+            SUM(b.amount) AS total_amount,
+            COUNT(*) AS bill_count
+        FROM bill b
+        LEFT JOIN category c ON b.category_id = c.id
+        WHERE b.deleted = 0
+          AND c.deleted = 0
+          AND b.user_id = #{userId}
+          AND b.type = #{type}
+          AND b.bill_date BETWEEN #{startDate} AND #{endDate}
+        GROUP BY b.category_id, c.name, c.icon
+        ORDER BY total_amount DESC
+    </select>
+
+    <resultMap id="TrendMap" type="com.accounting.dto.TrendResponse">
+        <result column="period" property="period"/>
+        <result column="income" property="income"/>
+        <result column="expense" property="expense"/>
+        <result column="balance" property="balance"/>
+    </resultMap>
+
+    <select id="selectTrendStatistics" resultMap="TrendMap">
+        SELECT
+            DATE_FORMAT(bill_date, '%Y-%m') AS period,
+            COALESCE(SUM(CASE WHEN type = 1 THEN amount ELSE 0 END), 0) AS income,
+            COALESCE(SUM(CASE WHEN type = 2 THEN amount ELSE 0 END), 0) AS expense,
+            COALESCE(SUM(CASE WHEN type = 1 THEN amount ELSE -amount END), 0) AS balance
+        FROM bill
+        WHERE deleted = 0
+          AND user_id = #{userId}
+          AND bill_date BETWEEN #{startDate} AND #{endDate}
+        GROUP BY DATE_FORMAT(bill_date, '%Y-%m')
+        ORDER BY period
+    </select>
+
+    <select id="sumAmountByUserAndDate" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(amount), 0)
+        FROM bill
+        WHERE deleted = 0
+          AND user_id = #{userId}
+          <if test="categoryId != null">
+              AND category_id = #{categoryId}
+          </if>
+          <if test="year != null">
+              AND YEAR(bill_date) = #{year}
+          </if>
+          <if test="month != null">
+              AND MONTH(bill_date) = #{month}
+          </if>
+          <if test="type != null">
+              AND type = #{type}
+          </if>
+    </select>
+
 </mapper>
