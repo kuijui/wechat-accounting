@@ -17,5 +17,10 @@ public class CategoryStatisticResponse {
 
     private BigDecimal totalAmount;
 
+    /**
+     * 该分类下的账单数量
+     */
+    private Long billCount;
+
     private BigDecimal percentage;
 }
