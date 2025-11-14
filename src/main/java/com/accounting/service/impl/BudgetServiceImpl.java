@@ -102,7 +102,7 @@ public class BudgetServiceImpl implements BudgetService {
         }
         
         // 计算已使用金额和使用率
-        calculateBudgetUsage(response);
+        calculateBudgetUsage(response, userId);
         
         return response;
     }
@@ -112,15 +112,16 @@ public class BudgetServiceImpl implements BudgetService {
         List<BudgetResponse> budgets = budgetMapper.selectBudgetList(userId, year, month);
         
         // 为每个预算计算使用情况
-        budgets.forEach(this::calculateBudgetUsage);
+        budgets.forEach(budget -> calculateBudgetUsage(budget, userId));
         
         return budgets;
     }
     
-    private void calculateBudgetUsage(BudgetResponse budget) {
+    private void calculateBudgetUsage(BudgetResponse budget, Long userId) {
         // 计算已使用金额（支出类型）
         BigDecimal usedAmount = billMapper.sumAmountByUserAndDate(
-                budget.getCategoryId() != null ? budget.getCategoryId() : null,
+                userId,
+                budget.getCategoryId(),
                 budget.getYear(),
                 budget.getMonth(),
                 2 // 支出类型
